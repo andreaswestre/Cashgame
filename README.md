@@ -1,0 +1,2 @@
+# Cashgame
+Cashgame calculator
