@@ -1,5 +1,5 @@
-all_states = ["set_players", "add_player", "rebuy", "print_stakes",
-              "print_final_stakes","change_chipvalue", "chip_to_kr","calculate"]
+all_states = ["set_players", "add_player", "rebuy", "print_stacks",
+              "print_final_stacks","change_chipvalue", "chip_to_kr","calculate"]
 players = {} #Key: navn, value: stackvalue
 final_stacks = {} #Slutt stacks
 actual_pot: float = 0 #Faktisk
@@ -10,17 +10,25 @@ currency = "chips" #Kr eller chips
 
 def main():
     print("WELCOME TO A GREAT CASHGAME ")
+    set_players()
     while True:
         i = 0
-        print()
-        print("Pick mode: ")
+        print("\nPick mode: ")
         for mode in all_states:
             i += 1
             print(i,mode)
-        mode = int(input()) # 1,2,3,4,5
-        if mode > 0 and mode < len(all_states)+1:
-            state = all_states[mode-1] + "()"
-            eval(state)
+        mode = input("Mode: ") # 1,2,3,4,5
+        if mode in all_states:
+            eval(mode + "()")
+        elif mode.isdigit():
+            mode = int(mode)
+            if mode > 0 and mode < len(all_states):
+                state = all_states[mode-1] + "()"
+                eval(state)
+            else:
+                print("Number must be between 1 and ", len(all_states))
+        else:
+            print("Mode not valid. ")
 
 def get_potsize():
     global potsize
@@ -31,14 +39,33 @@ def get_potsize():
 
 def add_player():
     global num #antall spillere
-    info = input("Name and stake ")
+    info = input("Name and stack ")
     list = info.split()
-    name = list[0]
-    stake = int(list[1])
-    players[name] = stake
+    while (len(list) < 2):
+        print("Wrong syntax.")
+        info = input("Name and stack ")
+        list = info.split()
+    length = len(list)
+    stack = int(list[-1])#Siste element i lista
+    name = ""
+    for nom in list[:-1]:
+        name += nom + " "
+    name = name[:-1]
+    players[name] = stack
     num += 1
     final_stacks[name] = 0 #Initialiserer sluttstacken
     get_potsize()
+
+def correction(input):
+    for player in players:
+        if input[:3] == player[:3]:
+            name = player
+            ans = input("Did you mean: ", name , "? y/n")
+            if ans.lower() == "y":
+                return name
+            else:
+                print("Try again, idiot")
+                rebuy()
 
 def set_players():
     number = int(input("How many players? "))
@@ -49,19 +76,18 @@ def set_players():
 def rebuy():
     global potsize
     name = input("Who? ")
-    if name not in players:
-        name = input("Enter another name, not valid ")
-    value = int( input("How much?(negative for buy-out)") )
+    while name not in players:
+        print("Enter another name, not valid ")
+        name = correction(name)
+    value = int(input("How much?(negative for buy-out)"))
     if value < 0:
-        if name in final_stacks:
-            final_stacks[name] -= value
-        else:
-            final_stacks[name] = value*-1
+        final_stacks[name] -= value
+    print(name,": ")
     players[name] += value
     potsize += value
     print(name, " ", value)
 
-def print_stakes():
+def print_stacks():
     global potsize
     for p in players:
         print(p, players[p],currency)
@@ -70,7 +96,7 @@ def print_stakes():
     print("Potsize should be ", potsize)
 
 
-def print_final_stakes():
+def print_final_stacks():
     print()
     for p in final_stacks:
         print(p, final_stacks[p],currency)
@@ -109,7 +135,7 @@ def calculate():#Manipulerer final_stacks til alt er riktig
     global chipvalue
     finalize()
     chip_to_kr()
-    print_final_stakes()
+    print_final_stacks()
     simple_pay()
     for player in final_stacks:
         for loser in final_stacks:
@@ -122,7 +148,7 @@ def calculate():#Manipulerer final_stacks til alt er riktig
                     print(loser, " pays ", player, "kr ", round(final_stacks[loser] * -1,0))
                     final_stacks[player] += final_stacks[loser]
                     final_stacks[loser] = 0
-    print_final_stakes()
+    print_final_stacks()
     chip_to_kr()
 
 def simple_pay(): #Sjekker om noen skylder og skal ha det samme beløpet
@@ -160,12 +186,12 @@ def chip_to_kr():
     if currency == "chips":
         for player in final_stacks:
             final_stacks[player] *= chipvalue
-            actual_pot[player] *= chipvalue
+            players[player] *= chipvalue
         currency = "kr"
     elif currency == "kr":
         for player in final_stacks:
             final_stacks[player] /= chipvalue
-            actual_pot[player] /= chipvalue
+            players[player] /= chipvalue
         currency = "chips"
 
 main()
