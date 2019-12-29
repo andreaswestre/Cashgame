@@ -57,16 +57,21 @@ def add_player():
     final_stacks[name] = 0 #Initialiserer sluttstacken
     get_potsize()
 
-def correction(input):
+def correction(newname):
     for player in players:
-        if player[:3] == input[:3]:
-            name = player
-            ans = input("Did you mean: ", name , "? y/n")
-            if ans == "y":
-                return name
-            else:
-                print("Try again, idiot")
-                rebuy()
+        name = "error"
+        for i in range(3):
+            if(len(newname) == i+1 or len(newname) > 2):
+                if player[:i+1] == newname[:+1]:
+                    name:str = player
+                    print("Did you mean: ", name , "? y/n")
+                    ans = input()
+                    if ans != "n":
+                        return name
+                    else:
+                        print("Try again, idiot")
+                        return "error"
+    return "error"
 
 def set_players():
     number = int(input("How many players? "))
@@ -77,9 +82,11 @@ def set_players():
 def rebuy():
     global potsize
     name = input("Who? ")
-    while name not in players:
-        print("Enter another name, not valid ")
+    while name not in players or name == "error":
         name = correction(name)
+        if name == "error":
+            print("Enter another name, not valid ")
+            name = input("Who? ")
     value = int(input("How much?(negative for buy-out)"))
     if value < 0:
         final_stacks[name] -= value
@@ -90,12 +97,12 @@ def rebuy():
 
 def print_stacks():
     global potsize
-    print("\nStack sizes\n","="*35)
+    print("\nStack sizes")
+    print("="*35)
     for p in players:
         print(str(p).ljust(20), str(players[p]).ljust(5),str(currency).ljust(10))
     get_potsize()
     print("\nPot size should be ",potsize)
-
 
 def print_final_stacks():
     print()
