@@ -1,5 +1,6 @@
 all_states = ["set_players", "add_player", "rebuy", "print_stacks",
               "print_final_stacks","change_chipvalue", "chip_to_kr","calculate"]
+all_states_names = ["Decide number of players", "Add player", "Rebuy/Buyout(?)", "Stack table", "Final stacks(?)", "Change chip value", "Chip to kr", "Calculate"]
 players = {} #Key: navn, value: stackvalue
 final_stacks = {} #Slutt stacks
 actual_pot: float = 0 #Faktisk
@@ -14,7 +15,7 @@ def main():
     while True:
         i = 0
         print("\nPick mode: ")
-        for mode in all_states:
+        for mode in all_states_names:
             i += 1
             print(i,mode)
         mode = input("Mode: ") # 1,2,3,4,5
@@ -41,7 +42,7 @@ def add_player():
     global num #antall spillere
     info = input("Name and stack ")
     list = info.split()
-    while (len(list) < 2):
+    while (len(list) < 2) or not list[-1].isdigit():
         print("Wrong syntax.")
         info = input("Name and stack ")
         list = info.split()
@@ -58,10 +59,10 @@ def add_player():
 
 def correction(input):
     for player in players:
-        if input[:3] == player[:3]:
+        if player[:3] == input[:3]:
             name = player
             ans = input("Did you mean: ", name , "? y/n")
-            if ans.lower() == "y":
+            if ans == "y":
                 return name
             else:
                 print("Try again, idiot")
@@ -89,11 +90,11 @@ def rebuy():
 
 def print_stacks():
     global potsize
+    print("\nStack sizes\n","="*35)
     for p in players:
-        print(p, players[p],currency)
-    print()
+        print(str(p).ljust(20), str(players[p]).ljust(5),str(currency).ljust(10))
     get_potsize()
-    print("Potsize should be ", potsize)
+    print("\nPot size should be ",potsize)
 
 
 def print_final_stacks():
@@ -101,10 +102,8 @@ def print_final_stacks():
     for p in final_stacks:
         print(p, final_stacks[p],currency)
     get_potsize()
-    print("Potsize should be ", potsize)
+    print("Pot size should be", potsize, chips)
     print()
-
-
 
 def finalize(): #Setter opp sluttstacks og sjekker om alt stemmer
     global actual_pot
