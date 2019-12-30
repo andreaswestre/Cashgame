@@ -61,7 +61,7 @@ def correction(newname):
     for player in players:
         name = "error"
         for i in range(3):
-            if(len(newname) == i+1 or len(newname) > 2):
+            if (len(newname) == i+1 or len(newname) >= 2):
                 if player[:i+1] == newname[:+1]:
                     name:str = player
                     print("Did you mean: ", name , "? y/n")
@@ -74,7 +74,15 @@ def correction(newname):
     return "error"
 
 def set_players():
-    number = int(input("How many players? "))
+    loop = True
+    while loop:
+        number = input("How many players? ")
+        if not number.isdigit():
+            print("Please write a number")
+        else:
+            loop = False
+            number = int(number)
+        
     while (number > 0):
         add_player()
         number-=1
@@ -201,3 +209,4 @@ def chip_to_kr():
             final_stacks[player] /= chipvalue
             players[player] /= chipvalue
         currency = "chips"
+
