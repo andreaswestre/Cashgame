@@ -22,7 +22,5 @@ for i in range (len(main_file.all_states)): # Creating all button functions
 btnQuit = Button(btnFrame, text="Quit", bg="grey", command = root.destroy) # Quit button 
 btnQuit.pack(fill="x")
 
-def content():
-    label = Label(frame, text="")
 
 root.mainloop()

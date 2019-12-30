@@ -62,7 +62,7 @@ def correction(newname):
         name = "error"
         for i in range(3):
             if (len(newname) == i+1 or len(newname) >= 2):
-                if player[:i+1] == newname[:+1]:
+                if player[:i+1].lower() == newname[:+1].lower():
                     name:str = player
                     print("Did you mean: ", name , "? y/n")
                     ans = input()
@@ -210,3 +210,4 @@ def chip_to_kr():
             players[player] /= chipvalue
         currency = "chips"
 
+main()
