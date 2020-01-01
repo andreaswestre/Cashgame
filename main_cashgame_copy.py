@@ -5,7 +5,7 @@ players = {} #Key: navn, value: stackvalue
 final_stacks = {} #Slutt stacks
 actual_pot: float = 0 #Faktisk
 potsize: float = 0 #Teoretisk
-chipvalue: float = 2.0 #Kr / chip
+chipvalue: float = 0.5 #Kr / chip
 num: int = 0 #Antall spillere
 currency = "chips" #Kr eller chips
 
@@ -26,6 +26,10 @@ def main():
             if mode > 0 and mode < len(all_states):
                 state = all_states[mode-1] + "()"
                 eval(state)
+            elif mode == 8:
+                state = all_states[mode-1] + "()"
+                eval(state)
+                return False
             else:
                 print("Number must be between 1 and ", len(all_states))
         else:
@@ -119,7 +123,7 @@ def print_final_stacks():
     for p in final_stacks:
         print(p, final_stacks[p],currency)
     get_potsize()
-    print("Pot size should be", potsize, chips)
+    print("Pot size should be", potsize, currency)
     print()
 
 def finalize(): #Setter opp sluttstacks og sjekker om alt stemmer
@@ -146,6 +150,8 @@ def finalize(): #Setter opp sluttstacks og sjekker om alt stemmer
         new = input("Do you want to calculate a new chipvalue? y/n ")
         if new == "y":
             new_chipvalue()
+        
+    write_file()
 
 def calculate():#Manipulerer final_stacks til alt er riktig
     global chipvalue
@@ -166,6 +172,8 @@ def calculate():#Manipulerer final_stacks til alt er riktig
                     final_stacks[loser] = 0
     print_final_stacks()
     chip_to_kr()
+    print("Game over. Well played, see you next time! :)\nIf you liked this program, feel free to vipps 94 03 60 91")
+    
 
 def simple_pay(): #Sjekker om noen skylder og skal ha det samme beløpet
     for player in final_stacks:
@@ -209,5 +217,12 @@ def chip_to_kr():
             final_stacks[player] /= chipvalue
             players[player] /= chipvalue
         currency = "chips"
+
+def write_file(): # in progress
+    f = open("scoreboard.txt", "w")
+    for p in final_stacks:
+        line = p + str(final_stacks[p])
+        f.write(line)
+    f.close()
 
 main()
