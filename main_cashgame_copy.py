@@ -224,5 +224,5 @@ def write_file(): # in progress
         line = p + str(final_stacks[p])
         f.write(line)
     f.close()
-
+    
 main()
